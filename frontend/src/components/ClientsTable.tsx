@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "./ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { Client } from "@/schemas/ClientSchema";
+import { Dispatch, SetStateAction } from "react";
 
 const clients: Client[] = [
   {
@@ -17,8 +18,9 @@ const clients: Client[] = [
     cpf: "123.456.789-00",
   },
 ];
-const ClientsTable = () => {
+const ClientsTable = ({ setIsDialogOpen }: { setIsDialogOpen: Dispatch<SetStateAction<boolean>> }) => {
   const editClient = (client: Client) => {
+    setIsDialogOpen(true);
     console.log(client);
   };
 
@@ -43,11 +45,11 @@ const ClientsTable = () => {
             <TableCell>{client.cpf}</TableCell>
             <TableCell>
               <div className="flex space-x-2">
-                <Button size="icon" onClick={() => editClient(client)}>
+                <Button variant={"ghost"} size="icon" onClick={() => editClient(client)}>
                   <Edit className="h-4 w-4" />
                   <span className="sr-only">Edit</span>
                 </Button>
-                <Button size="icon" onClick={() => deleteClient(client.id!)}>
+                <Button variant={"ghost"} size="icon" onClick={() => deleteClient(client.id!)}>
                   <Trash2 className="h-4 w-4 text-rose-600" />
                   <span className="sr-only">Delete</span>
                 </Button>
