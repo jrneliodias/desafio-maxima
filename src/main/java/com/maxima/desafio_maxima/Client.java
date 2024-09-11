@@ -18,6 +18,4 @@ public class Client {
     private String name;
     private String cpf;
     private Integer age;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
 }
