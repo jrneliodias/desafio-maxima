@@ -28,12 +28,20 @@ public class ClientController {
         String name = request.get("name");
         String cpf = request.get("cpf");
         String age = request.get("age");
+        if(name == null || cpf == null || age == null){
+            throw new RuntimeException("Existem parâmetros faltando na requisição.");
+        }
         ClientRequestDTO client = new ClientRequestDTO(name,cpf,Integer.parseInt(age));
         return ResponseEntity.status(HttpStatus.CREATED).body(clientService.createClient(client));
     }
     @PatchMapping("/clients/{id}")
-    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        Client updatedClient = clientService.updateClient(id, updates);
+    public ResponseEntity<Client> updatePatchClient(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        Client updatedClient = clientService.patchClient(id, updates);
+        return ResponseEntity.ok(updatedClient);
+    }
+    @PutMapping("/clients/{id}")
+    public ResponseEntity<Client> updatePutClient(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        Client updatedClient = clientService.putClient(id, updates);
         return ResponseEntity.ok(updatedClient);
     }
 
