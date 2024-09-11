@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class ClientController {
@@ -31,12 +32,9 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clientService.createClient(client));
     }
     @PatchMapping("/clients/{id}")
-    public ResponseEntity<Client> updateClient(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String cpf = request.get("cpf");
-        String age = request.get("age");
-        ClientRequestDTO client = new ClientRequestDTO(name,cpf,Integer.parseInt(age));
-        return ResponseEntity.status(HttpStatus.CREATED).body(clientService.createClient(client));
+    public ResponseEntity<Client> updateClient(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        Client updatedClient = clientService.updateClient(id, updates);
+        return ResponseEntity.ok(updatedClient);
     }
 
     @DeleteMapping("/clients/{id}")

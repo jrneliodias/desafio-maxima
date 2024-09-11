@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClientService {
@@ -37,18 +38,25 @@ public class ClientService {
         return clientRepository.findById(id).orElse(null);
     }
 
-    public Client updateClient(Long id, ClientRequestDTO data) {
+    public Client updateClient(Long id, Map<String, Object> updates) {
         Client client = getClientById(id);
         if (client == null) {
             throw new RuntimeException("Cliente não encontrado");
         }
-        String name = data.name();
-        String cpf = data.cpf();
-        Integer age = data.age();
+        if(updates.containsKey("name")){
+            client.setName((String) updates.get("name"));
+        }
+        if(updates.containsKey("cpf")){
+            client.setCpf((String) updates.get("cpf"));
+        }
+        if(updates.containsKey("age")){
+            Integer age = (Integer) updates.get("age");
+            if(age < 0){
+                throw new IllegalArgumentException("Idade não pode ser menor que 0.");
+            }
+            client.setAge(age);
+        }
 
-        client.setName(name);
-        client.setCpf(cpf);
-        client.setAge(age);
 
         return clientRepository.save(client);
     }
