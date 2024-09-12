@@ -26,7 +26,7 @@ const ClientsTable = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <Table className="text-white">
+    <Table className="">
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
@@ -38,14 +38,14 @@ const ClientsTable = () => {
       <TableBody>
         {getClientQuery.data &&
           getClientQuery.data.map((client: Client) => (
-            <TableRow key={client.id}>
+            <TableRow key={client.id} className="text-lg rounded-lg">
               <TableCell>{client.name}</TableCell>
               <TableCell>{client.age}</TableCell>
               <TableCell>{formatCPF(client.cpf)}</TableCell>
               <TableCell>
                 <div className="flex">
                   <Button variant={"ghost"} size="icon" onClick={() => setIsDialogOpen(true)}>
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-4 w-4 text-muted-foreground" />
                   </Button>
                   <Button variant={"ghost"} size="icon" onClick={() => deleteClient(client.id!)}>
                     <Trash2 className="h-4 w-4 text-rose-600" />
