@@ -6,6 +6,7 @@ import ClientDialog from "./components/ClientDialog";
 
 function App() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   return (
     <main className=" h-screen w-full flex flex-col items-center space-y-10">
       <header className="container flex justify-between bg-black h-fit p-3 rounded-b-lg">
@@ -18,8 +19,9 @@ function App() {
         </Button>
       </section>
       <section className="container p-2">
-        <ClientsTable setIsDialogOpen={setIsDialogOpen} />
+        <ClientsTable />
       </section>
+
       <ClientDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />
     </main>
   );

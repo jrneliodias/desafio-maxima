@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Dispatch, SetStateAction } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -8,27 +8,58 @@ import { Client, clientSchema } from "@/schemas/ClientSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Description } from "@radix-ui/react-dialog";
 import { formatCPF, removeCPFFormatting } from "@/lib/utils";
-const ClientDialog = ({ isDialogOpen, setIsDialogOpen, clientId }: { isDialogOpen: boolean; setIsDialogOpen: Dispatch<SetStateAction<boolean>>; clientId?: number }) => {
+import { useAddClient } from "@/hooks/use-add-client/use-add-client";
+import { toast } from "sonner";
+import { useUpdateClient } from "@/hooks/use-add-client/use-update-client";
+
+interface ClientDialogProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: Dispatch<SetStateAction<boolean>>;
+  client?: Client | undefined;
+}
+const ClientDialog = ({ isDialogOpen, setIsDialogOpen, client }: ClientDialogProps) => {
+  const { mutate: addClient } = useAddClient();
+  const { mutate: updateClient } = useUpdateClient();
   const form = useForm<Client>({
     resolver: zodResolver(clientSchema),
-    defaultValues: clientId
-      ? {}
+    defaultValues: client
+      ? client
       : {
+          id: undefined,
           name: "",
-          age: undefined,
+          age: 0,
           cpf: "",
         },
   });
+
   const onSubmit = (data: Client) => {
     const formattedValues = { ...data, cpf: removeCPFFormatting(data.cpf) };
-    console.log(formattedValues);
-    form.reset();
+
+    if (client?.id) {
+      updateClient(formattedValues, {
+        onSuccess: () => {
+          setIsDialogOpen(false);
+          form.reset();
+        },
+      });
+      return;
+    }
+    addClient(formattedValues, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+        form.reset();
+        toast.success("Cliente adicionado com sucesso!");
+      },
+      onError: (error) => {
+        toast.error(`Erro ao adicionar Cliente: ${error.message}`);
+      },
+    });
   };
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Client</DialogTitle>
+          <DialogTitle>{client ? "Update" : "Add"} Client</DialogTitle>
         </DialogHeader>
         <Description></Description>
 
@@ -73,7 +104,9 @@ const ClientDialog = ({ isDialogOpen, setIsDialogOpen, clientId }: { isDialogOpe
                 </FormItem>
               )}
             />
-            <Button type="submit"> Submit</Button>
+            <DialogFooter>
+              <Button type="submit">{client ? "Update" : "Add"} </Button>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>
